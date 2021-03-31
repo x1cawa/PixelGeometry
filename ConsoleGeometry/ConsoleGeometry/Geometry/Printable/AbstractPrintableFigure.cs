@@ -14,7 +14,7 @@ namespace ConsoleGeometry.Geometry.Printable
 
         public virtual ConsoleColor Color { get; set; }
 
-        public AbstractPrintableFigure()
+        public AbstractPrintableFigure() //Printer to here!!!!!!!!!!!!!!!
         {
             currFrame = 0;
             currState = new FigureState();
@@ -78,8 +78,8 @@ namespace ConsoleGeometry.Geometry.Printable
 
         public virtual FigureState GetLastFrame() => frames[frames.Count - 1];
 
-        public virtual void Print() => ConsolePrinter.Print(this, Color);
-        public virtual void Eraze() => ConsolePrinter.Print(this, ConsoleColor.Black);
+        public virtual void Print() => ConsolePrinter.Instance.Print(this, Color); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public virtual void Eraze() => ConsolePrinter.Instance.Print(this, ConsoleColor.Black); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         public virtual void ResetAnimation()
         {

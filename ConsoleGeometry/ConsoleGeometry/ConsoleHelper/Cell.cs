@@ -26,9 +26,9 @@ namespace ConsoleGeometry.ConsoleHelper
 
         public Cell Print()
         {
-            ConsoleState.SetColor(color);
+            ConsoleState.Instance.SetColor(color); //!!!
             Console.Write(CELL_CHAR);
-            ConsoleState.UndoColor();
+            ConsoleState.Instance.UndoColor(); //!!!
             return this;
         }
     }

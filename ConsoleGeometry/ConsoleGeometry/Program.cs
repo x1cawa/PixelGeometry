@@ -17,9 +17,10 @@ namespace ConsoleGeometry
         {
             //TODO: console printer to IPrinter + Singleton
             //TODO: ConsoleState to IEnvironmentState + Singleton
-            //TODO: Algorhithm for circle
-            //TODO: figures (triangle)
+            //TODO: IEnvironmentState set/get ICursor/IColor
+            //TODO: Function for amount of circle dots
             //TODO: Animation FPS set
+            //TODO: Class Actions
             Animate();
             while (Console.ReadKey().Key != ConsoleKey.Enter) ;
             stop = true;
@@ -28,7 +29,7 @@ namespace ConsoleGeometry
 
         public static async void Animate()
         {
-            ConsoleState.HideCursor();
+            ConsoleState.Instance.HideCursor();
 
             //AbstractPrintableFigure figure = new PrintableRect(5, 10, ConsoleColor.Green);
             //AbstractPrintableFigure figure = new PrintableSquare(10, ConsoleColor.Green);

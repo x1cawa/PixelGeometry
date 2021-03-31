@@ -16,12 +16,12 @@ namespace ConsoleGeometry.Geometry.Printable
 
         public void Print()
         {
-            ConsolePrinter.Print(this, Color);
+            ConsolePrinter.Instance.Print(this, Color); //!!!!!!!!
         }
 
         public void Eraze()
         {
-            ConsolePrinter.Print(this, ConsoleColor.Black);
+            ConsolePrinter.Instance.Print(this, ConsoleColor.Black); //!!!!!!!!!!
         }
 
         public override object Clone() => new PrintablePoint(Left, Top, Color);

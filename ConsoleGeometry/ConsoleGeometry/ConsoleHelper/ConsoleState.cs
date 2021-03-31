@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using ConsoleGeometry.Geometry;
 using ConsoleGeometry.Geometry.Printable;
+using ConsoleGeometry.Environment;
 
 namespace ConsoleGeometry.ConsoleHelper
 {
-    public static class ConsoleState
+    public class ConsoleState : IEnvironmentState
     {
+        #region Types
         public struct Color
         {
             public readonly ConsoleColor Foreground;
@@ -44,12 +46,25 @@ namespace ConsoleGeometry.ConsoleHelper
             }
         }
 
-        private static readonly Stack<Color> colors;
-        private static readonly Stack<Cursor> cursors;
-        private static int colorChanges;
-        private static int cursorChanges;
+        #endregion
 
-        static ConsoleState()
+        private static ConsoleState instance;
+        public static ConsoleState Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new ConsoleState();
+                return instance;
+            }
+        }
+
+        private readonly Stack<Color> colors;
+        private readonly Stack<Cursor> cursors;
+        private int colorChanges;
+        private int cursorChanges;
+
+        private ConsoleState()
         {
             colors = new Stack<Color>();
             cursors = new Stack<Cursor>();
@@ -57,84 +72,84 @@ namespace ConsoleGeometry.ConsoleHelper
             cursorChanges = 0;
         }
 
-        public static void SaveCurrentColor()
+        public void SaveCurrentColor()
         {
             colorChanges++;
             colors.Push(Color.ReadConsole());
         }
-        public static void SaveCurrentCursor()
+        public void SaveCurrentCursor()
         {
             cursorChanges++;
             cursors.Push(Cursor.ReadConsole());
         }
 
 
-        public static void HideCursor() => Console.CursorVisible = false;
-        public static void ShowCursor() => Console.CursorVisible = true;
-        public static void UndoColor()
+        public void HideCursor() => Console.CursorVisible = false;
+        public void ShowCursor() => Console.CursorVisible = true;
+        public void UndoColor()
         {
             colorChanges--;
             colors.Pop().WriteConsole();
         }
-        public static void UndoCursor()
+        public void UndoCursor()
         {
             cursorChanges--;
             cursors.Pop().WriteConsole();
         }
-        public static void SetColor(Color color, bool savePrevious = true)
+        public void SetColor(Color color, bool savePrevious = true)
         {
             if (savePrevious)
                 SaveCurrentColor();
             color.WriteConsole();
         }
-        public static void SetCursor(Cursor cursor, bool savePrevious = true)
+        public void SetCursor(Cursor cursor, bool savePrevious = true)
         {
             if (savePrevious)
                 SaveCurrentCursor();
             cursor.WriteConsole();
         }
-        public static Color GetColor() => Color.ReadConsole();
-        public static Cursor GetCursor() => Cursor.ReadConsole();
-        public static void ResetColor(bool savePrevious = true)
+        public Color GetColor() => Color.ReadConsole();
+        public Cursor GetCursor() => Cursor.ReadConsole();
+        public void ResetColor(bool savePrevious = true)
         {
             if (savePrevious)
                 SaveCurrentColor();
             SetColor(Color.Default());
         }
-        public static void ResetCursor(bool savePrevious = true)
+        public void ResetCursor(bool savePrevious = true)
         {
             if (savePrevious)
                 SaveCurrentCursor();
             SetCursor(Cursor.Default());
         }
-        public static void ClearColorsStack()
+        public void ClearColorsStack()
         {
             colorChanges = 0;
             colors.Clear();
         }
-        public static void ClearCursorStack()
+        public void ClearCursorStack()
         {
             cursorChanges = 0;
             cursors.Clear();
         }
-        public static void SetBoth(Color color, Cursor cursor, bool savePrevious = true)
+        public void SetBoth(Color color, Cursor cursor, bool savePrevious = true)
         {
             SetColor(color, savePrevious);
             SetCursor(cursor, savePrevious);
         }
-        public static void UndoBoth()
+        public void UndoBoth()
         {
             UndoColor();
             UndoCursor();
         }
 
-        public static void SaveState()
+        public void SaveState()
         {
             cursorChanges = 0;
             colorChanges = 0;
         }
 
-        public static void UndoToSaved()
+        public void UndoToSaved()
         {
             while (colors.Count > colors.Count - colorChanges)
                 colors.Pop();

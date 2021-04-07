@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using ConsoleGeometry.ConsoleHelper;
 using ConsoleGeometry.Geometry.Maths;
+using ConsoleGeometry.Environment;
+using Color = System.Drawing.Color;
 
 namespace ConsoleGeometry.Geometry.Printable
 {
@@ -12,8 +14,8 @@ namespace ConsoleGeometry.Geometry.Printable
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public PrintableRect() { }
-        public PrintableRect(int width, int height, ConsoleColor color) { Width = width; Height = height; Color = color; }
+        public PrintableRect(IPrinter printer) : base(printer) { }
+        public PrintableRect(int width, int height, Color color, IPrinter printer) : base(printer) { Width = width; Height = height; Color = color; }
 
         public override IEnumerable<Line> GetLines()
         {

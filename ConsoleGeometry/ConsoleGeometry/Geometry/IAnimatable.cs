@@ -11,6 +11,7 @@ namespace ConsoleGeometry.Geometry
 
         public IAnimatable MoveHorizontal(int range);
         public IAnimatable MoveVertical(int range);
+        public IAnimatable SetPosition(int left, int top);
 
         public IAnimatable Rotate(int grad);
         public IAnimatable SetRotation(int grad);

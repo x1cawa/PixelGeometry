@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using ConsoleGeometry.ConsoleHelper;
 using ConsoleGeometry.Geometry.Maths;
+using ConsoleGeometry.Environment;
+using Color = System.Drawing.Color;
 
 namespace ConsoleGeometry.Geometry.Printable
 {
     public class PrintableTriangle : AbstractPrintableFigure
     {
         public int CircumscribedRadius { get; set; }
-        public PrintableTriangle(int circumscribedRadius, ConsoleColor color) { CircumscribedRadius = circumscribedRadius; Color = color; }
+        public PrintableTriangle(int circumscribedRadius, Color color, IPrinter printer) : base(printer) { CircumscribedRadius = circumscribedRadius; Color = color; }
 
         public override IEnumerable<Line> GetLines()
         {

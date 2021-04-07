@@ -7,9 +7,9 @@ namespace ConsoleGeometry.Geometry.Printable
 {
     public interface IBrush
     {
-        public char Symbol { get; set; }
+        /*public char Symbol { get; set; }
         public ConsoleState.Color ConsoleColor { get; set; }
 
-        public void SetBrash(char symbol, ConsoleState.Color color);
+        public void SetBrash(char symbol, ConsoleState.Color color);*/
     }
 }

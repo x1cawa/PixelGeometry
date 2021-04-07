@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using ConsoleGeometry.ConsoleHelper;
+using ConsoleGeometry.Environment;
+using Color = System.Drawing.Color;
 
 namespace ConsoleGeometry.Geometry.Printable
 {
@@ -12,14 +14,17 @@ namespace ConsoleGeometry.Geometry.Printable
         private readonly List<FigureState> frames;
         private int currFrame;
 
-        public virtual ConsoleColor Color { get; set; }
+        public virtual Color Color { get; set; }
 
-        public AbstractPrintableFigure() //Printer to here!!!!!!!!!!!!!!!
+        public IPrinter Printer { get; set; }
+
+        public AbstractPrintableFigure(IPrinter printer)
         {
             currFrame = 0;
             currState = new FigureState();
             nextState = new FigureState();
             frames = new List<FigureState>();
+            Printer = printer;
         }
 
         public virtual IAnimatable ConfirmFrame()
@@ -38,6 +43,13 @@ namespace ConsoleGeometry.Geometry.Printable
         public virtual IAnimatable MoveVertical(int range)
         {
             nextState.Center.Top += range;
+            return this;
+        }
+
+        public virtual IAnimatable SetPosition(int left, int top)
+        {
+            nextState.Center.Top = top;
+            nextState.Center.Left = left;
             return this;
         }
 
@@ -78,8 +90,8 @@ namespace ConsoleGeometry.Geometry.Printable
 
         public virtual FigureState GetLastFrame() => frames[frames.Count - 1];
 
-        public virtual void Print() => ConsolePrinter.Instance.Print(this, Color); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public virtual void Eraze() => ConsolePrinter.Instance.Print(this, ConsoleColor.Black); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public virtual void Print() => Printer.Print(this, Color);
+        public virtual void Eraze() => Printer.Print(this, Color.Black);
 
         public virtual void ResetAnimation()
         {

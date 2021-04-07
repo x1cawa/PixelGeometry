@@ -5,25 +5,28 @@ using ConsoleGeometry.Geometry;
 using ConsoleGeometry.Geometry.Printable;
 using ConsoleGeometry.ConsoleHelper;
 using System.Threading.Tasks;
+using ConsoleGeometry.Action;
+
+using Color = System.Drawing.Color;
 
 namespace ConsoleGeometry
 {
     class Program
     {
-        static bool stop = false;
+        //static bool stop = false;
         static bool stopped = false;
+        static CancellationTokenSource tokenSource;
 
         static void Main(string[] args)
         {
-            //TODO: console printer to IPrinter + Singleton
-            //TODO: ConsoleState to IEnvironmentState + Singleton
-            //TODO: IEnvironmentState set/get ICursor/IColor
             //TODO: Function for amount of circle dots
             //TODO: Animation FPS set
             //TODO: Class Actions
+            tokenSource = new CancellationTokenSource();
             Animate();
             while (Console.ReadKey().Key != ConsoleKey.Enter) ;
-            stop = true;
+            tokenSource.Cancel();
+            //stop = true;
             while (!stopped) ;
         }
 
@@ -31,19 +34,14 @@ namespace ConsoleGeometry
         {
             ConsoleState.Instance.HideCursor();
 
-            //AbstractPrintableFigure figure = new PrintableRect(5, 10, ConsoleColor.Green);
-            //AbstractPrintableFigure figure = new PrintableSquare(10, ConsoleColor.Green);
-            AbstractPrintableFigure circle = new PrintableCircle(5, ConsoleColor.Red);
-            AbstractPrintableFigure triangle = new PrintableTriangle(5, ConsoleColor.Green);
-            /*figure.MoveHorizontal(50)
-                .MoveVertical(40)
-                .SetSize(1)
-                .ConfirmFrame();*/
+            AbstractPrintableFigure figure = new PrintableTriangle(5, Color.Green, ConsolePrinter.Instance);
+            AbstractPrintableFigure circle = new PrintableCircle(5, Color.Red, ConsolePrinter.Instance);
+
             circle.MoveHorizontal(50)
                 .MoveVertical(40)
                 .SetSize(1)
                 .ConfirmFrame();
-            triangle.MoveHorizontal(50)
+            figure.MoveHorizontal(50)
                 .MoveVertical(40)
                 .SetSize(1)
                 .ConfirmFrame();
@@ -53,96 +51,30 @@ namespace ConsoleGeometry
                 if (i < 180)
                 {
                     circle.Resize(1.03f).MoveHorizontal(1).ConfirmFrame();
-                    triangle.Rotate(5).Resize(1.03f).MoveHorizontal(1).ConfirmFrame();
-                    //figure.Rotate(5).Resize(1.03f).MoveHorizontal(1).ConfirmFrame();
+                    figure.Rotate(5).Resize(1.03f).MoveHorizontal(1).ConfirmFrame();
                 }
                 else
                 {
                     circle.Resize(0.97f).MoveHorizontal(-1).ConfirmFrame();
-                    triangle.Rotate(-5).Resize(0.97f).MoveHorizontal(-1).ConfirmFrame();
-                    //figure.Rotate(-5).Resize(0.97f).MoveHorizontal(-1).ConfirmFrame();
+                    figure.Rotate(-5).Resize(0.97f).MoveHorizontal(-1).ConfirmFrame();
                 }
             }
 
-            int FPS = 1000 / 24;
-            await Task.Run(() => { });
-            while(!stop)
-            {
-                //figure.ToFirstFrame();
-                //figure.Print();
-                circle.ToZeroFrame();
-                triangle.ToZeroFrame();
-                Thread.Sleep(FPS);
-                //figure.Eraze();
-                while (circle.NextFrame() & triangle.NextFrame() && !stop)
-                {
-                    //figure.Print();
-                    circle.Print();
-                    triangle.Print();
-                    Thread.Sleep(FPS);
-                    circle.Eraze();
-                    triangle.Eraze();
-                    //figure.Eraze();
-                }
+            Actions actions = new Actions();
+            actions.Add(circle);
+            actions.Add(figure);
 
-                /*for (int i = 0; i < 20; i++)
-                {
-                    if (stop)
-                        break;
-                    line.Print();
-                    line2.Print();
-                    Thread.Sleep(FPS);
-                    line.Eraze();
-                    line2.Eraze();
-                    line.Vector.X++;
-                    line.Vector.Y--;
-                    line2.Vector.X++;
-                }
-                for (int i = 0; i < 19; i++)
-                {
-                    if (stop)
-                        break;
-                    line.Print();
-                    line2.Print();
-                    Thread.Sleep(FPS);
-                    line.Eraze();
-                    line2.Eraze();
-                    line.Vector.X--;
-                    line.Vector.Y++;
-                    //line.Vector.Y--;
-                    line2.Vector.Y++;
-                }
-                for (int i = 0; i < 19; i++)
-                {
-                    if (stop)
-                        break;
-                    line.Print();
-                    line2.Print();
-                    Thread.Sleep(FPS);
-                    line.Eraze();
-                    line2.Eraze();
-                    line.Vector.X++;
-                    line.Vector.Y--;
-                    //line.Vector.Y++;
-                    line2.Vector.Y--;
-                }
-                for (int i = 0; i < 20; i++)
-                {
-                    if (stop)
-                        break;
-                    line.Print();
-                    line2.Print();
-                    Thread.Sleep(FPS);
-                    line.Eraze();
-                    line2.Eraze();
-                    line.Vector.X--;
-                    line.Vector.Y++;
-                    //line.Vector.X--;
-                    line2.Vector.X--;
-                }*/
-            }
-            //line.Print();
-            //line2.Print();
+            await Task.Run(() => actions.Action(tokenSource.Token));
+            
+
+            /*AbstractPrintableFigure circle = new PrintableCircle(30, Color.Green, ConsolePrinter.Instance);
+            circle.SetPosition(50, 30);
+            for (int i = 0; i < 25; i++)
+                circle.Resize(0.9f).ConfirmFrame();
+            Actions actions = new Actions();
+            actions.Add(circle);
+            await Task.Run(() => actions.Action(tokenSource.Token));*/
+
             stopped = true;
         }
     }

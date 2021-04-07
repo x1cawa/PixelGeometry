@@ -6,7 +6,7 @@ using ConsoleGeometry.Geometry.Maths;
 
 namespace ConsoleGeometry.Geometry
 {
-    public class Point : IPoint, ICloneable
+    public class Point : IPoint
     {
         public int Left { get; set; }
         public int Top { get; set; }

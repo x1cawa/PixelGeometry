@@ -8,12 +8,20 @@ namespace ConsoleGeometry.ConsoleHelper
     {
         private const char CELL_CHAR = '▄';
 
-        private ConsoleState.Color color;
+        public ConsoleState.Cursor Postion { get; set; }
+        public ConsoleColor Top { get; set; }
+        public ConsoleColor Bottom { get; set; }
 
-        public ConsoleColor Top { set => color = new ConsoleState.Color(color.Foreground, value); }
-        public ConsoleColor Bottom { set => color = new ConsoleState.Color(value, color.Background); }
-
-        public Cell() => color = new ConsoleState.Color(ConsoleColor.Black, ConsoleColor.Black);
+        public Cell(ConsoleState.Cursor cursor, ConsoleColor color, bool bottom)
+        {
+            Postion = cursor;
+            Top = ConsoleColor.Black;
+            Bottom = ConsoleColor.Black;
+            if (bottom)
+                Bottom = color;
+            else
+                Top = color;
+        }
 
         public Cell Set(ConsoleColor color, bool bottom)
         {
@@ -26,9 +34,9 @@ namespace ConsoleGeometry.ConsoleHelper
 
         public Cell Print()
         {
-            ConsoleState.Instance.SetColor(color); //!!!
+            ConsoleState.Instance.SetConsoleColors(Top, Bottom);
+            Postion.WriteConsole();
             Console.Write(CELL_CHAR);
-            ConsoleState.Instance.UndoColor(); //!!!
             return this;
         }
     }

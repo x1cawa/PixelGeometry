@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Color = System.Drawing.Color;
 using ConsoleGeometry.Geometry;
 using ConsoleGeometry.Geometry.Printable;
 using ConsoleGeometry.Environment;
@@ -33,17 +34,18 @@ namespace ConsoleGeometry.ConsoleHelper
             EnvironmentState = ConsoleState.Instance;
         }
 
-        public override void Print(Point point, ConsoleColor color, bool saveCursor = true)
+        public override void Print(IPoint point, Color color, bool savePoint = true)
         {
             var cursor = new ConsoleState.Cursor(point);
-            ConsoleState.Instance.SetCursor(cursor, saveCursor); //!!!! EnvironmentState.SetCursor(cursor, saveCursor);
+            EnvironmentState.SetPoint(point, savePoint);
+            //ConsoleState.Instance.SetCursor(cursor, saveCursor); //!!!! EnvironmentState.SetCursor(cursor, saveCursor);
             bool bottom = point.Top % 2 == 1;
             if (repo.ContainsKey(cursor))
-                repo[cursor].Set(color, bottom).Print();
+                repo[cursor].Set(color.ToConsoleColor(), bottom).Print();
             else
-                repo.Add(cursor, new Cell().Set(color, bottom).Print());
-            if(saveCursor)
-                EnvironmentState.UndoCursor();
+                repo.Add(cursor, new Cell(cursor, color.ToConsoleColor(), bottom).Print());
+            if(savePoint)
+                EnvironmentState.UndoPoint();
         }
     }
 }

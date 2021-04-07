@@ -4,13 +4,14 @@ using System.Text;
 using ConsoleGeometry.Geometry;
 using ConsoleGeometry.Geometry.Printable;
 using ConsoleGeometry.Environment;
+using Color = System.Drawing.Color;
 
 namespace ConsoleGeometry.ConsoleHelper
 {
     public class ConsoleState : IEnvironmentState
     {
         #region Types
-        public struct Color
+        /*public struct Color
         {
             public readonly ConsoleColor Foreground;
             public readonly ConsoleColor Background;
@@ -26,14 +27,14 @@ namespace ConsoleGeometry.ConsoleHelper
                 Console.BackgroundColor = Background;
             }
         }
-
+        */
         public struct Cursor
         {
             public readonly int Left;
             public readonly int Top;
 
             public Cursor(int left, int top) { Left = left; Top = top; }
-            public Cursor(Point point) { Left = point.Left; Top = point.Top / 2; }
+            public Cursor(IPoint point) { Left = point.Left; Top = point.Top / 2; }
 
             public static Cursor ReadConsole() => new Cursor(Console.CursorLeft, Console.CursorTop);
             public static Cursor Default() => new Cursor();
@@ -59,28 +60,33 @@ namespace ConsoleGeometry.ConsoleHelper
             }
         }
 
+        private Color currColor;
+        private IPoint currPoint;
+
         private readonly Stack<Color> colors;
-        private readonly Stack<Cursor> cursors;
+        private readonly Stack<IPoint> points;
         private int colorChanges;
-        private int cursorChanges;
+        private int pointChanges;
 
         private ConsoleState()
         {
             colors = new Stack<Color>();
-            cursors = new Stack<Cursor>();
+            points = new Stack<IPoint>();
             colorChanges = 0;
-            cursorChanges = 0;
+            pointChanges = 0;
+            currColor = Color.LightGray;
+            currPoint = new Point();
         }
 
         public void SaveCurrentColor()
         {
             colorChanges++;
-            colors.Push(Color.ReadConsole());
+            colors.Push(currColor);
         }
-        public void SaveCurrentCursor()
+        public void SaveCurrentPoint()
         {
-            cursorChanges++;
-            cursors.Push(Cursor.ReadConsole());
+            pointChanges++;
+            points.Push((IPoint)currPoint.Clone());
         }
 
 
@@ -89,63 +95,69 @@ namespace ConsoleGeometry.ConsoleHelper
         public void UndoColor()
         {
             colorChanges--;
-            colors.Pop().WriteConsole();
+            currColor = colors.Pop();
         }
-        public void UndoCursor()
+        public void UndoPoint()
         {
-            cursorChanges--;
-            cursors.Pop().WriteConsole();
+            pointChanges--;
+            currPoint = points.Pop();
         }
         public void SetColor(Color color, bool savePrevious = true)
         {
             if (savePrevious)
                 SaveCurrentColor();
-            color.WriteConsole();
+            currColor = color;
         }
-        public void SetCursor(Cursor cursor, bool savePrevious = true)
+        public void SetConsoleColors(ConsoleColor background, ConsoleColor foreground)
+        {
+            Console.BackgroundColor = background;
+            Console.ForegroundColor = foreground;
+        }
+        public void SetPoint(IPoint point, bool savePrevious = true)
         {
             if (savePrevious)
-                SaveCurrentCursor();
-            cursor.WriteConsole();
+                SaveCurrentPoint();
+            currPoint = (IPoint)point.Clone();
         }
-        public Color GetColor() => Color.ReadConsole();
-        public Cursor GetCursor() => Cursor.ReadConsole();
+        public Color GetColor() => currColor;
+        public IPoint GetPoint() => currPoint;
+        public Cursor GetCursor() => new Cursor(currPoint);
         public void ResetColor(bool savePrevious = true)
         {
             if (savePrevious)
                 SaveCurrentColor();
-            SetColor(Color.Default());
+            SetColor(Color.LightGray);
         }
-        public void ResetCursor(bool savePrevious = true)
+        public void ResetPoint(bool savePrevious = true)
         {
             if (savePrevious)
-                SaveCurrentCursor();
-            SetCursor(Cursor.Default());
+                SaveCurrentPoint();
+            SetPoint(new Point());
         }
         public void ClearColorsStack()
         {
             colorChanges = 0;
             colors.Clear();
         }
-        public void ClearCursorStack()
+        public void ClearPointsStack()
         {
-            cursorChanges = 0;
-            cursors.Clear();
+            pointChanges = 0;
+            points.Clear();
         }
-        public void SetBoth(Color color, Cursor cursor, bool savePrevious = true)
+        public void SetBoth(Color color, IPoint point, bool savePrevious = true)
         {
             SetColor(color, savePrevious);
-            SetCursor(cursor, savePrevious);
+            SetPoint(point, savePrevious);
         }
         public void UndoBoth()
         {
             UndoColor();
-            UndoCursor();
+            UndoPoint();
         }
 
         public void SaveState()
         {
-            cursorChanges = 0;
+            pointChanges = 0;
             colorChanges = 0;
         }
 
@@ -153,8 +165,8 @@ namespace ConsoleGeometry.ConsoleHelper
         {
             while (colors.Count > colors.Count - colorChanges)
                 colors.Pop();
-            while (cursors.Count > cursors.Count - cursorChanges)
-                cursors.Pop();
+            while (points.Count > points.Count - pointChanges)
+                points.Pop();
         }
         /*
         public static void MoveUp(bool savePrevious = true)

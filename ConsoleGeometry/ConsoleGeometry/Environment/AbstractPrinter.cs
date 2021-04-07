@@ -3,6 +3,7 @@ using ConsoleGeometry.Geometry.Printable;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Color = System.Drawing.Color;
 
 namespace ConsoleGeometry.Environment
 {
@@ -17,24 +18,24 @@ namespace ConsoleGeometry.Environment
 
         static AbstractPrinter() { environmentStates = new Dictionary<Type, IEnvironmentState>(); }
 
-        public abstract void Print(Point point, ConsoleColor color, bool saveCursor = true);
+        public abstract void Print(IPoint point, Color color, bool savePoint = true);
 
-        public void Print(Line line, ConsoleColor color, bool saveCursor = true)
+        public void Print(ILine line, Color color, bool savePoint = true)
         {
-            if (saveCursor)
-                environmentStates[this.GetType()].SaveCurrentCursor();
+            if (savePoint)
+                environmentStates[this.GetType()].SaveCurrentPoint();
             foreach (Point point in line.BreakeIntoPoints())
                 Print(point, color, false);
-            if (saveCursor)
-                environmentStates[this.GetType()].UndoCursor();
+            if (savePoint)
+                environmentStates[this.GetType()].UndoPoint();
         }
 
-        public void Print(AbstractPrintableFigure figure, ConsoleColor color)
+        public void Print(AbstractPrintableFigure figure, Color color)
         {
-            environmentStates[this.GetType()].SaveCurrentCursor();
+            environmentStates[this.GetType()].SaveCurrentPoint();
             foreach (Line line in figure.GetLines())
                 Print(line, color, false);
-            environmentStates[this.GetType()].UndoCursor();
+            environmentStates[this.GetType()].SaveCurrentPoint();
         }
     }
 }

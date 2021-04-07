@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConsoleGeometry.Geometry
 {
-    public interface IPoint
+    public interface IPoint : ICloneable
     {
         public int Left { get; set; }
         public int Top { get; set; }

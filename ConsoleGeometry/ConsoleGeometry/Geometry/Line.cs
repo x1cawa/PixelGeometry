@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConsoleGeometry.Geometry
 {
-    public class Line : ILine, ICloneable
+    public class Line : ILine
     {
         public Point StartPoint { get; set; }
         public Vector Vector { get; set; }

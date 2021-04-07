@@ -7,7 +7,7 @@ namespace ConsoleGeometry.Geometry.Printable
 {
     public class Brush : IBrush
     {
-        public char Symbol { get; set; }
+        /*public char Symbol { get; set; }
         public ConsoleState.Color ConsoleColor { get; set; }
 
         public Brush() : this (' ', ConsoleState.Color.Default()) { }
@@ -17,6 +17,6 @@ namespace ConsoleGeometry.Geometry.Printable
         {
             Symbol = symbol;
             ConsoleColor = color;
-        }
+        }*/
     }
 }

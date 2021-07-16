@@ -15,7 +15,7 @@ namespace ConsoleGeometry.Action
         public Actions()
         {
             figures = new List<AbstractPrintableFigure>();
-            FPS = 24;
+            FPS = 20;
         }
 
         public void Add(AbstractPrintableFigure figure) => figures.Add(figure);
